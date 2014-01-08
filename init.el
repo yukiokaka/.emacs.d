@@ -26,9 +26,35 @@
 ;(setq make-backup-files nil)
 
 ;文字設定
+
+(set-default-font "ricty-12.5")
+(set-face-font 'variable-pitch "ricty-12.5")
+;(iset-fontset-font (frame-parameter nil 'font)
+;                  'japanese-jisx0208
+;                  '("Takaoゴシック" . "unicode-bmp")
+;)
 (add-to-list 'default-frame-alist '(font . "ricty-12.5"))
+
+;クリップボードをPCと同期
 (setq x-select-enable-clipboard t)
 (global-set-key "\C-y" 'x-clipboard-yank)
+
+;全角スペース
+
+(setq whitespace-style
+      '(tabs tab-mark spaces space-mark))
+(setq whitespace-space-regexp "\\(\x3000+\\)")
+(setq whitespace-display-mappings
+      '((space-mark ?\x3000 [?\□])
+        (tab-mark   ?\t   [?\xBB ?\t])
+        ))
+(require 'whitespace)
+(global-whitespace-mode 1)
+(set-face-foreground 'whitespace-space "LightSlateGray")
+(set-face-background 'whitespace-space "DarkSlateGray")
+(set-face-foreground 'whitespace-tab "LightSlateGray")
+(set-face-background 'whitespace-tab "DarkSlateGray")
+
 
 ;zshrcにて
 ;alias emacs='XMODIFIERS=@im=none \emacs'
