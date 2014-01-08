@@ -1,0 +1,10 @@
+/home/yuki/robotech/git/can-spi/firmware/init.c
+/home/yuki/robotech/git/can-spi/firmware/#init.c#
+/home/yuki/robotech/git/can-spi/firmware/spi.c
+/home/yuki/robotech/git/can-spi/firmware/#spi.c#
+/home/yuki/robotech/git/can-spi/firmware/main.c
+/home/yuki/robotech/git/can-spi/firmware/#main.c#
+/home/yuki/robotech/git/can-spi/firmware/lib/STM32F10x_StdPeriph_Driver/inc/stm32f10x_spi.h
+/home/yuki/robotech/git/can-spi/firmware/lib/STM32F10x_StdPeriph_Driver/inc/#stm32f10x_spi.h#
+/home/yuki/robotech/git/can-spi/firmware/lib/STM32F10x_StdPeriph_Driver/src/stm32f10x_spi.c
+/home/yuki/robotech/git/can-spi/firmware/lib/STM32F10x_StdPeriph_Driver/src/#stm32f10x_spi.c#

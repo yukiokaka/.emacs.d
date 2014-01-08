@@ -1,0 +1,8 @@
+#!/bin/sh
+export file=$1
+
+# 拡張子覗いたファイル名をnameに格納
+export name=${file%.*}
+
+platex $name.tex
+dvipdfmx ${file%.*}.dvi
