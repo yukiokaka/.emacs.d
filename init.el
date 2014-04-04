@@ -1,5 +1,6 @@
 (server-start)
 
+
 (setq load-path (cons "~/.emacs.d/elisp" load-path))
 (show-paren-mode t)
 
@@ -46,7 +47,7 @@
 (setq whitespace-space-regexp "\\(\x3000+\\)")
 (setq whitespace-display-mappings
       '((space-mark ?\x3000 [?\□])
-        (tab-mark   ?\t   [?\xBB ?\t])
+        ;(tab-mark   ?\t   [?\xBB ?\t])
         ))
 (require 'whitespace)
 (global-whitespace-mode 1)
@@ -120,7 +121,8 @@
                      (:background "#999999"))
                  (t ())
                  )))
-
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
+(load-theme 'wombat t)
 ;透過については~/.Xresourcesに記載
 ;xrdb ~/.Xresources
 ;; フレームの透明度
@@ -300,3 +302,32 @@ unless return was pressed outside the comment"
 (global-set-key "\C-ql" 'windmove-right)
 (global-set-key "\C-qh" 'windmove-left)
 (global-set-key "\C-qj" 'windmove-down)
+
+
+;; ツールバーを非表示
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+
+;; php-mode
+(require 'php-mode)
+
+(setq php-mode-force-pear t) ;PEAR規約のインデント設定にする
+(add-to-list 'auto-mode-alist '("\\.php$" . php-mode)) ;*.phpのファイルのときにphp-modeを自動起動する
+
+;; php-mode-hook
+(add-hook 'php-mode-hook
+          (lambda ()
+            (require 'php-completion)
+            (php-completion-mode t)
+            (define-key php-mode-map (kbd "C-o") 'phpcmp-complete) ;php-completionの補完実行キーバインドの設定
+            (make-local-variable 'ac-sources)
+            (setq ac-sources '(
+                               ac-source-words-in-same-mode-buffers
+                               ac-source-php-completion
+                               ac-source-filename
+                               ))))
+
+
+(setq load-path (cons "~/.emacs.d/emacs-nav-49" load-path))
+(require 'nav)
+(global-set-key "\C-x\C-d" 'nav-toggle)
