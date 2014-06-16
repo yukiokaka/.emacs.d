@@ -20,8 +20,9 @@
 ;; 辞書保存
 (setq ac-comphist-file "~/.emacs.d/elisp/auto-complete-dics/auto-dics")
 (setq ac-dictionary-directories "~/.emacs.d/elisp/auto-complete-dics/")
-
-
+(add-to-list 'ac-modes 'text-mode)      ;; text-modeでも自動的に有効にする
+(add-to-list 'ac-modes 'verilog-mode)      ;; verilog-modeでも自動的に有効にする
+(add-to-list 'ac-modes 'd-mode)      ;; d-modeでも自動的に有効にする
 
 ;*.c~\のようなファイルを作らない
 ;(setq make-backup-files nil)
@@ -35,7 +36,8 @@
 ;                  '("Takaoゴシック" . "unicode-bmp")
 ;)
 (add-to-list 'default-frame-alist '(font . "ricty-12.5"))
-
+;; デフォルトの文字コードと改行コード
+(set-default-coding-systems 'utf-8-dos)
 ;クリップボードをPCと同期
 (setq x-select-enable-clipboard t)
 (global-set-key "\C-y" 'x-clipboard-yank)
@@ -63,8 +65,8 @@
 ;env XMODIFIERS=@im=none
 ;をexecに付け足す
 (add-hook 'mozc-mode-hook
-  (lambda()
-    (define-key mozc-mode-map (kbd "<zenkaku-hankaku>") 'toggle-input-method)))
+          (lambda()
+            (define-key mozc-mode-map (kbd "<zenkaku-hankaku>") 'toggle-input-method)))
 
 ;; Coding system.
 (set-default-coding-systems 'utf-8)
@@ -104,23 +106,23 @@
 (setq inhibit-startup-message t)
 
 ;; savehist
- (setq savehist-file "~/.emacs.d/cache/savehist/history")
+(setq savehist-file "~/.emacs.d/cache/savehist/history")
 
 
 ;色設定
-  (custom-set-faces
-     '(default ((t
-                 (:background "black" :foreground "white")
-                                            )))
-     '(cursor ((((class color)
-                  (background dark))
-                   (:background "white"))
-;                  (:background "#00AA00"))
-                 (((class color)
-                     (background light))
-                     (:background "#999999"))
-                 (t ())
-                 )))
+(custom-set-faces
+  '(default ((t
+               (:background "black" :foreground "white")
+               )))
+  '(cursor ((((class color)
+              (background dark))
+             (:background "white"))
+            ;                  (:background "#00AA00"))
+            (((class color)
+              (background light))
+             (:background "#999999"))
+            (t ())
+            )))
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
 (load-theme 'wombat t)
 ;透過については~/.Xresourcesに記載
@@ -142,7 +144,7 @@
 ;;タブは2文字ごとに
 ;;;;追加　タブの設定は以下のようにしないとだめ
 (setq-default tab-stop-list
-     '(0 1 2 3 4 6 8 12 16 20))
+              '(0 1 2 3 4 6 8 12 16 20))
 (setq indent-tabs-mode 4)
 
 
@@ -188,11 +190,11 @@
 (setq-default ispell-program-name "aspell")
 ; 日本語混じりのTeX文書でスペルチェック
 (eval-after-load "ispell"
-'(add-to-list 'ispell-skip-region-alist '("[^\000-\377]+")))
+                 '(add-to-list 'ispell-skip-region-alist '("[^\000-\377]+")))
 ; YaTeX起動時に，flyspell-modeも起動する
 (add-hook 'yatex-mode-hook 'flyspell-mode)
 (custom-set-variables
-'(flyspell-auto-correct-binding [(control ?\:)]))
+  '(flyspell-auto-correct-binding [(control ?\:)]))
 
 ;;csv-modeの設定
 ;;; 20081206 csv-mode.el
@@ -200,7 +202,7 @@
 (add-to-list 'load-path "~/.emacs.d/")
 (add-to-list 'auto-mode-alist '("\\.[Cc][Ss][Vv]\\'" . csv-mode))
 (autoload 'csv-mode "csv-mode"
-  "Major mode for editing comma-separated value files." t)
+          "Major mode for editing comma-separated value files." t)
 
 ;;haskell-modeの設定
 (add-to-list 'load-path "~/.emacs.d/haskell-mode-2.8.0")
@@ -219,41 +221,41 @@
 (require 'doxymacs)
 (add-hook 'c-mode-common-hook 'doxymacs-mode)
 (defun my-doxymacs-font-lock-hook ()
-      (if (or (eq major-mode 'c-mode) (eq major-mode 'c++-mode))
-                (doxymacs-font-lock)))
+  (if (or (eq major-mode 'c-mode) (eq major-mode 'c++-mode))
+    (doxymacs-font-lock)))
 (add-hook 'font-lock-mode-hook 'my-doxymacs-font-lock-hook)
 
 (defun my-javadoc-return ()
   "Advanced C-m for Javadoc multiline comments.
-Inserts `*' at the beggining of the new line if
-unless return was pressed outside the comment"
+  Inserts `*' at the beggining of the new line if
+  unless return was pressed outside the comment"
   (interactive)
   (setq last (point))
   (setq is-inside
-	(if (search-backward "*/" nil t)
-	    ;; there are some comment endings - search forward
-	    (if (search-forward "/*" last t)
-		't
-	      'nil)
-	  ;; it's the only comment - search backward
-	  (goto-char last)
-	  (if (search-backward "/*" nil t)
-	      't
-	    'nil
-	    )
-	  )
-	)
+        (if (search-backward "*/" nil t)
+          ;; there are some comment endings - search forward
+          (if (search-forward "/*" last t)
+            't
+            'nil)
+          ;; it's the only comment - search backward
+          (goto-char last)
+          (if (search-backward "/*" nil t)
+            't
+            'nil
+            )
+          )
+        )
   ;; go to last char position
   (goto-char last)
   ;; the point is inside some comment, insert `*'
   (if is-inside
-      (progn
-	(insert "\n*")
-	(indent-for-tab-command))
+    (progn
+      (insert "\n*")
+      (indent-for-tab-command))
     ;; else insert only new-line
     (insert "\n")))
 (add-hook 'c++-mode-hook (lambda ()
-  (local-set-key "\r" 'my-javadoc-return)))
+                           (local-set-key "\r" 'my-javadoc-return)))
 
 ;;Window サイズ変更用関数
 (defun window-resizer ()
@@ -268,22 +270,22 @@ unless return was pressed outside the comment"
               -1))
         c)
     (catch 'end-flag
-      (while t
-        (message "size[%dx%d]"
-                 (window-width) (window-height))
-        (setq c (read-char))
-        (cond ((= c ?l)
-               (enlarge-window-horizontally dx))
-              ((= c ?h)
-               (shrink-window-horizontally dx))
-              ((= c ?j)
-               (enlarge-window dy))
-              ((= c ?k)
-               (shrink-window dy))
-              ;; otherwise
-              (t
-               (message "Quit")
-               (throw 'end-flag t)))))))
+           (while t
+                  (message "size[%dx%d]"
+                           (window-width) (window-height))
+                  (setq c (read-char))
+                  (cond ((= c ?l)
+                         (enlarge-window-horizontally dx))
+                        ((= c ?h)
+                         (shrink-window-horizontally dx))
+                        ((= c ?j)
+                         (enlarge-window dy))
+                        ((= c ?k)
+                         (shrink-window dy))
+                        ;; otherwise
+                        (t
+                          (message "Quit")
+                          (throw 'end-flag t)))))))
 
 
 (global-set-key "\C-c\C-r" 'window-resizer)
@@ -308,26 +310,8 @@ unless return was pressed outside the comment"
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 
-;; php-mode
-(require 'php-mode)
-
-(setq php-mode-force-pear t) ;PEAR規約のインデント設定にする
-(add-to-list 'auto-mode-alist '("\\.php$" . php-mode)) ;*.phpのファイルのときにphp-modeを自動起動する
-
-;; php-mode-hook
-(add-hook 'php-mode-hook
-          (lambda ()
-            (require 'php-completion)
-            (php-completion-mode t)
-            (define-key php-mode-map (kbd "C-o") 'phpcmp-complete) ;php-completionの補完実行キーバインドの設定
-            (make-local-variable 'ac-sources)
-            (setq ac-sources '(
-                               ac-source-words-in-same-mode-buffers
-                               ac-source-php-completion
-                               ac-source-filename
-                               ))))
-
-
+;;navの設定
 (setq load-path (cons "~/.emacs.d/emacs-nav-49" load-path))
 (require 'nav)
 (global-set-key "\C-x\C-d" 'nav-toggle)
+
