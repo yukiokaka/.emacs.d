@@ -1,6 +1,7 @@
 (server-start)
 
-
+;; load-pathに追加
+(setq load-path (cons "~/.emacs.d" load-path))
 (setq load-path (cons "~/.emacs.d/elisp" load-path))
 (show-paren-mode t)
 
@@ -37,7 +38,11 @@
 ;)
 (add-to-list 'default-frame-alist '(font . "ricty-12.5"))
 ;; デフォルトの文字コードと改行コード
-(set-default-coding-systems 'utf-8-dos)
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+(set-buffer-file-coding-system 'utf-8)
+(setq default-buffer-file-coding-system 'utf-8)
+(set-default-coding-systems 'utf-8)
 ;クリップボードをPCと同期
 (setq x-select-enable-clipboard t)
 (global-set-key "\C-y" 'x-clipboard-yank)
@@ -58,22 +63,23 @@
 (set-face-foreground 'whitespace-tab "LightSlateGray")
 (set-face-background 'whitespace-tab "DarkSlateGray")
 
+(require 'mozc)
+(set-language-environment "Japanese")
+(setq default-input-method "japanese-mozc")
+(global-set-key [zenkaku-hankaku] 'mozc-mode)
+
 
 ;zshrcにて
 ;alias emacs='XMODIFIERS=@im=none \emacs'
 ;emacs23.desktopにて
 ;env XMODIFIERS=@im=none
 ;をexecに付け足す
-(add-hook 'mozc-mode-hook
-          (lambda()
-            (define-key mozc-mode-map (kbd "<zenkaku-hankaku>") 'toggle-input-method)))
 
 ;; Coding system.
 (set-default-coding-systems 'utf-8)
 (set-keyboard-coding-system 'utf-8)
 (set-terminal-coding-system 'utf-8)
 (set-buffer-file-coding-system 'utf-8)
-(prefer-coding-system 'utf-8)
 
 ;anything
 (require 'anything)
@@ -256,6 +262,25 @@
     (insert "\n")))
 (add-hook 'c++-mode-hook (lambda ()
                            (local-set-key "\r" 'my-javadoc-return)))
+;gtags
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; GNU GLOBAL(gtags)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(autoload 'gtags-mode "gtags" "" t)
+(setq gtags-mode-hook
+      '(lambda ()
+         (local-set-key "\M-t" 'gtags-find-tag)
+         (local-set-key "\M-r" 'gtags-find-rtag)
+         (local-set-key "\M-s" 'gtags-find-symbol)
+         (local-set-key "\C-t" 'gtags-pop-stack)
+         ))
+
+(add-hook 'c-mode-common-hook
+          '(lambda()
+             (gtags-mode 1)
+             (gtags-make-complete-list)
+             ))
+
 
 ;;Window サイズ変更用関数
 (defun window-resizer ()
@@ -314,4 +339,40 @@
 (setq load-path (cons "~/.emacs.d/emacs-nav-49" load-path))
 (require 'nav)
 (global-set-key "\C-x\C-d" 'nav-toggle)
+
+
+;;^M+kによる一行コピー
+;;^M+Kによる一行カット
+(defun copy-whole-line (&optional arg)
+  "Copy current line."
+  (interactive "p")
+  (or arg (setq arg 1))
+  (if (and (> arg 0) (eobp) (save-excursion (forward-visible-line 0) (eobp)))
+      (signal 'end-of-buffer nil))
+  (if (and (< arg 0) (bobp) (save-excursion (end-of-visible-line) (bobp)))
+      (signal 'beginning-of-buffer nil))
+  (unless (eq last-command 'copy-region-as-kill)
+    (kill-new "")
+    (setq last-command 'copy-region-as-kill))
+  (cond ((zerop arg)
+         (save-excursion
+           (copy-region-as-kill (point) (progn (forward-visible-line 0) (point)))
+           (copy-region-as-kill (point) (progn (end-of-visible-line) (point)))))
+        ((< arg 0)
+         (save-excursion
+           (copy-region-as-kill (point) (progn (end-of-visible-line) (point)))
+           (copy-region-as-kill (point)
+                                (progn (forward-visible-line (1+ arg))
+                                       (unless (bobp) (backward-char))
+                                       (point)))))
+        (t
+         (save-excursion
+           (copy-region-as-kill (point) (progn (forward-visible-line 0) (point)))
+           (copy-region-as-kill (point)
+                                (progn (forward-visible-line arg) (point))))))
+  (message (substring (car kill-ring-yank-pointer) 0 -1)))
+
+(global-set-key (kbd "M-k") 'copy-whole-line)
+(global-set-key (kbd "M-K") 'kill-whole-line)
+
 
