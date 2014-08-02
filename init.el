@@ -335,11 +335,9 @@
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 
-;;navの設定
-(setq load-path (cons "~/.emacs.d/emacs-nav-49" load-path))
-(require 'nav)
-(global-set-key "\C-x\C-d" 'nav-toggle)
-
+;;direxの使用
+(require 'direx)
+(global-set-key (kbd "C-x C-j") 'direx:jump-to-directory)
 
 ;;^M+kによる一行コピー
 ;;^M+Kによる一行カット
