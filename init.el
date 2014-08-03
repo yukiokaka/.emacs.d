@@ -1,3 +1,4 @@
+;; emacs-serverの起動
 (server-start)
 
 ;; load-pathに追加
@@ -5,50 +6,68 @@
 (setq load-path (cons "~/.emacs.d/elisp" load-path))
 (show-paren-mode t)
 
-(setq tab-width 4)
-(setq indent-tabs-mode nil)
-
-(require 'auto-install)
-(setq auto-install-directory "~/.emacs.d/elisp/")
-;(auto-install-update-emacswiki-package-name t)
-(auto-install-compatibility-setup)
-
-
-
-;auto-completeの設定
-(require 'auto-complete)
-(global-auto-complete-mode t)
-;; 辞書保存
-(setq ac-comphist-file "~/.emacs.d/elisp/auto-complete-dics/auto-dics")
-(setq ac-dictionary-directories "~/.emacs.d/elisp/auto-complete-dics/")
-(add-to-list 'ac-modes 'text-mode)      ;; text-modeでも自動的に有効にする
-(add-to-list 'ac-modes 'verilog-mode)      ;; verilog-modeでも自動的に有効にする
-(add-to-list 'ac-modes 'd-mode)      ;; d-modeでも自動的に有効にする
-
-;*.c~\のようなファイルを作らない
+;*.c~\のようなファイルを作らない;;;;;;;;;;;
 ;(setq make-backup-files nil)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;文字設定
-
-(set-default-font "ricty-12.5")
-(set-face-font 'variable-pitch "ricty-12.5")
-;(iset-fontset-font (frame-parameter nil 'font)
-;                  'japanese-jisx0208
-;                  '("Takaoゴシック" . "unicode-bmp")
-;)
-(add-to-list 'default-frame-alist '(font . "ricty-12.5"))
-;; デフォルトの文字コードと改行コード
-(set-terminal-coding-system 'utf-8)
-(set-keyboard-coding-system 'utf-8)
-(set-buffer-file-coding-system 'utf-8)
-(setq default-buffer-file-coding-system 'utf-8)
-(set-default-coding-systems 'utf-8)
-;クリップボードをPCと同期
+; クリップボードをPCと同期;;;;;;;;;;;;;;;;;
 (setq x-select-enable-clipboard t)
 (global-set-key "\C-y" 'x-clipboard-yank)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;全角スペース
 
+; Display, Font Setting;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; ツールバーを非表示;;;;;;;;;;;;;;;;;;;;;;;
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; 初期画面を非表示;;;;;;;;;;;;;;;;;;;;;;;;;
+(setq inhibit-startup-message t)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; savehist;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(setq savehist-file "~/.emacs.d/cache/savehist/history")
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; Color Setting;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(custom-set-faces
+  '(default ((t
+               (:background "black" :foreground "white")
+               )))
+  '(cursor ((((class color)
+              (background dark))
+             (:background "white"))
+            ;                  (:background "#00AA00"))
+            (((class color)
+              (background light))
+             (:background "#999999"))
+            (t ())
+            )))
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
+(load-theme 'wombat t)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; transparency;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;透過については~/.Xresourcesに記載
+;xrdb ~/.Xresources
+;; フレームの透明度
+;(set-frame-parameter (selected-frame) 'alpha '(85 50))
+;(add-to-list 'default-frame-alist '(alpha 85 50))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;文字設定;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ricty fontの使用
+(set-default-font "ricty-12.5")
+(set-face-font 'variable-pitch "ricty-12.5")
+(add-to-list 'default-frame-alist '(font . "ricty-12.5"))
+
+;; 全角スペース
 (setq whitespace-style
       '(tabs tab-mark spaces space-mark))
 (setq whitespace-space-regexp "\\(\x3000+\\)")
@@ -63,32 +82,95 @@
 (set-face-foreground 'whitespace-tab "LightSlateGray")
 (set-face-background 'whitespace-tab "DarkSlateGray")
 
+
+;; Tab Setting
+(setq tab-width 4)
+(setq indent-tabs-mode nil)
+(setq-default c-basic-offset 4     ;;基本インデント量4
+              tab-width 4          ;;タブ幅4
+              indent-tabs-mode nil)  ;;インデントをタブでするかスペースでするか
+;;タブは2文字ごとに
+;;;;追加　タブの設定は以下のようにしないとだめ
+(setq-default tab-stop-list
+              '(0 1 2 3 4 6 8 12 16 20))
+(setq indent-tabs-mode 4)
+
+
+;; mozcの使用
 (require 'mozc)
 (set-language-environment "Japanese")
 (setq default-input-method "japanese-mozc")
 (global-set-key [zenkaku-hankaku] 'mozc-mode)
 
 
-;zshrcにて
-;alias emacs='XMODIFIERS=@im=none \emacs'
-;emacs23.desktopにて
-;env XMODIFIERS=@im=none
-;をexecに付け足す
-
-;; Coding system.
-(set-default-coding-systems 'utf-8)
-(set-keyboard-coding-system 'utf-8)
+;; デフォルトの文字コードと改行コード
 (set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
 (set-buffer-file-coding-system 'utf-8)
+(setq default-buffer-file-coding-system 'utf-8)
+(set-default-coding-systems 'utf-8)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;anything
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;auto-install, auto-completeの設定;;;;;;;;;;;
+(require 'auto-install)
+(setq auto-install-directory "~/.emacs.d/elisp/")
+;(auto-install-update-emacswiki-package-name t)
+(auto-install-compatibility-setup)
+
+(require 'auto-complete)
+(global-auto-complete-mode t)
+;; 辞書保存
+(setq ac-comphist-file "~/.emacs.d/elisp/auto-complete-dics/auto-dics")
+(setq ac-dictionary-directories "~/.emacs.d/elisp/auto-complete-dics/")
+(add-to-list 'ac-modes 'text-mode)      ;; text-modeでも自動的に有効にする
+(add-to-list 'ac-modes 'verilog-mode)      ;; verilog-modeでも自動的に有効にする
+(add-to-list 'ac-modes 'd-mode)      ;; d-modeでも自動的に有効にする
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; anything;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (require 'anything)
 (require 'anything-config)
 (require 'anything-match-plugin)
 
 (global-set-key (kbd "C-x C-g") 'anything)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; yatex-modeに関する設定
+; muti-term;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'multi-term)
+(setq multi-term-program shell-file-name)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; direx;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'direx)
+(global-set-key (kbd "C-x C-j") 'direx:jump-to-directory)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; gtags;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; GNU GLOBAL(gtags)
+(autoload 'gtags-mode "gtags" "" t)
+(setq gtags-mode-hook
+      '(lambda ()
+         (local-set-key "\M-t" 'gtags-find-tag)
+         (local-set-key "\M-r" 'gtags-find-rtag)
+         (local-set-key "\M-s" 'gtags-find-symbol)
+         (local-set-key "\C-t" 'gtags-pop-stack)
+         ))
+
+(add-hook 'c-mode-common-hook
+          '(lambda()
+             (gtags-mode 1)
+             (gtags-make-complete-list)
+             ))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+; Mode Setting;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Yatex mode
 ; エンコーディングをutf-8にする。＠yatex
 (setq YaTeX-kanji-code 4)
 (setq YaTeX-use-LaTeX2e t)
@@ -108,101 +190,7 @@
 (setq tex-command "sh ~/.emacs.d/dvipdfmx_output")
 
 
-;初期画面いらない
-(setq inhibit-startup-message t)
-
-;; savehist
-(setq savehist-file "~/.emacs.d/cache/savehist/history")
-
-
-;色設定
-(custom-set-faces
-  '(default ((t
-               (:background "black" :foreground "white")
-               )))
-  '(cursor ((((class color)
-              (background dark))
-             (:background "white"))
-            ;                  (:background "#00AA00"))
-            (((class color)
-              (background light))
-             (:background "#999999"))
-            (t ())
-            )))
-(add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
-(load-theme 'wombat t)
-;透過については~/.Xresourcesに記載
-;xrdb ~/.Xresources
-;; フレームの透明度
-;(set-frame-parameter (selected-frame) 'alpha '(85 50))
-;(add-to-list 'default-frame-alist '(alpha 85 50))
-
-;; Set transparency of emacs
-;(defun transparency (value)
-;  "Sets the transparency of the frame window. 0=transparent/100=opaque"
-;  (interactive "nTransparency Value 0 - 100 opaque:")
-;  (set-frame-parameter (selected-frame) 'alpha value))
-
-
-(setq-default c-basic-offset 4     ;;基本インデント量4
-              tab-width 4          ;;タブ幅4
-              indent-tabs-mode nil)  ;;インデントをタブでするかスペースでするか
-;;タブは2文字ごとに
-;;;;追加　タブの設定は以下のようにしないとだめ
-(setq-default tab-stop-list
-              '(0 1 2 3 4 6 8 12 16 20))
-(setq indent-tabs-mode 4)
-
-
-;コメントアウト用コマンド
-(add-hook 'c++-mode-hook
-          '(lambda ()
-             (hs-minor-mode 1)))
-(add-hook 'c-mode-hook
-          '(lambda ()
-             (hs-minor-mode 1)))
-(add-hook 'scheme-mode-hook
-          '(lambda ()
-             (hs-minor-mode 1)))
-(add-hook 'emacs-lisp-mode-hook
-          '(lambda ()
-             (hs-minor-mode 1)))
-(add-hook 'lisp-mode-hook
-          '(lambda ()
-             (hs-minor-mode 1)))
-(add-hook 'python-mode-hook
-          '(lambda ()
-             (hs-minor-mode 1)))
-(add-hook 'ruby-mode-hook
-          '(lambda ()
-             (hs-minor-mode 1)))
-(add-hook 'java-mode-hook
-          '(lambda ()
-             (hs-minor-mode 1)))
-(add-hook 'yatex-mode-hook
-          '(lambda ()
-             (hs-minor-mode 1)))
-
-(define-key global-map (kbd "C-;") 'hs-toggle-hiding)
-
-; globalなC-zを無効化
-(global-unset-key "\C-z")
-
-
-(autoload 'd-mode "d-mode" "Major mode for editing D code." t)
-(add-to-list 'auto-mode-alist '("\\.d[i]?\\'" . d-mode))
-
-;; スペルチェッカとしてaspellを指定
-(setq-default ispell-program-name "aspell")
-; 日本語混じりのTeX文書でスペルチェック
-(eval-after-load "ispell"
-                 '(add-to-list 'ispell-skip-region-alist '("[^\000-\377]+")))
-; YaTeX起動時に，flyspell-modeも起動する
-(add-hook 'yatex-mode-hook 'flyspell-mode)
-(custom-set-variables
-  '(flyspell-auto-correct-binding [(control ?\:)]))
-
-;;csv-modeの設定
+;; csv-mode
 ;;; 20081206 csv-mode.el
 ;;; http://d.hatena.ne.jp/amt/20081206/CsvMode4Emacs
 (add-to-list 'load-path "~/.emacs.d/")
@@ -210,7 +198,7 @@
 (autoload 'csv-mode "csv-mode"
           "Major mode for editing comma-separated value files." t)
 
-;;haskell-modeの設定
+;; haskell-mode
 (add-to-list 'load-path "~/.emacs.d/haskell-mode-2.8.0")
 (require 'haskell-mode)
 (require 'haskell-cabal)
@@ -218,12 +206,11 @@
 (add-to-list 'auto-mode-alist '("\\.lhs$" . literate-haskell-mode))
 (add-to-list 'auto-mode-alist '("\\.cabal\\'" . haskell-cabal-mode))
 
+;; D-mode
+(autoload 'd-mode "d-mode" "Major mode for editing D code." t)
+(add-to-list 'auto-mode-alist '("\\.d[i]?\\'" . d-mode))
 
-;;muti-termの設定
-(require 'multi-term)
-(setq multi-term-program shell-file-name)
-
-;;doxymacsの設定
+;; doxymacs-mode
 (require 'doxymacs)
 (add-hook 'c-mode-common-hook 'doxymacs-mode)
 (defun my-doxymacs-font-lock-hook ()
@@ -262,27 +249,63 @@
     (insert "\n")))
 (add-hook 'c++-mode-hook (lambda ()
                            (local-set-key "\r" 'my-javadoc-return)))
-;gtags
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; GNU GLOBAL(gtags)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(autoload 'gtags-mode "gtags" "" t)
-(setq gtags-mode-hook
-      '(lambda ()
-         (local-set-key "\M-t" 'gtags-find-tag)
-         (local-set-key "\M-r" 'gtags-find-rtag)
-         (local-set-key "\M-s" 'gtags-find-symbol)
-         (local-set-key "\C-t" 'gtags-pop-stack)
-         ))
 
-(add-hook 'c-mode-common-hook
-          '(lambda()
-             (gtags-mode 1)
-             (gtags-make-complete-list)
-             ))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-;;Window サイズ変更用関数
+
+;コメントアウト用コマンド;;;;;;;;;;;;;;;;;;;;;;;
+(add-hook 'c++-mode-hook
+          '(lambda ()
+             (hs-minor-mode 1)))
+(add-hook 'c-mode-hook
+          '(lambda ()
+             (hs-minor-mode 1)))
+(add-hook 'scheme-mode-hook
+          '(lambda ()
+             (hs-minor-mode 1)))
+(add-hook 'emacs-lisp-mode-hook
+          '(lambda ()
+             (hs-minor-mode 1)))
+(add-hook 'lisp-mode-hook
+          '(lambda ()
+             (hs-minor-mode 1)))
+(add-hook 'python-mode-hook
+          '(lambda ()
+             (hs-minor-mode 1)))
+(add-hook 'ruby-mode-hook
+          '(lambda ()
+             (hs-minor-mode 1)))
+(add-hook 'java-mode-hook
+          '(lambda ()
+             (hs-minor-mode 1)))
+(add-hook 'yatex-mode-hook
+          '(lambda ()
+             (hs-minor-mode 1)))
+
+(define-key global-map (kbd "C-;") 'hs-toggle-hiding)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; globalなC-zを無効化;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(global-unset-key "\C-z")
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+; スペルチェッカとしてaspellを指定;;;;;;;;;;;;;;
+(setq-default ispell-program-name "aspell")
+; 日本語混じりのTeX文書でスペルチェック
+(eval-after-load "ispell"
+                 '(add-to-list 'ispell-skip-region-alist '("[^\000-\377]+")))
+; YaTeX起動時に，flyspell-modeも起動する
+(add-hook 'yatex-mode-hook 'flyspell-mode)
+(custom-set-variables
+  '(flyspell-auto-correct-binding [(control ?\:)]))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+; Control Original Function;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Window サイズ変更用関数
 (defun window-resizer ()
   "Control window size and position."
   (interactive)
@@ -312,32 +335,18 @@
                           (message "Quit")
                           (throw 'end-flag t)))))))
 
+(global-set-key "\C-cr" 'window-resizer)
 
-(global-set-key "\C-c\C-r" 'window-resizer)
-
-
-
+; Window 移動
 (define-key global-map "\C-q" (make-sparse-keymap))
 
 ;; quoted-insert は C-q C-q へ割り当て
 (global-set-key "\C-q\C-q" 'quoted-insert)
 
-;; window-resizer は C-q C-r (resize) で
-(global-set-key "\C-q\C-r" 'window-resizer)
-
-;;Window移動
+;; Window移動
 (global-set-key "\C-ql" 'windmove-right)
 (global-set-key "\C-qh" 'windmove-left)
 (global-set-key "\C-qj" 'windmove-down)
-
-
-;; ツールバーを非表示
-(tool-bar-mode -1)
-(scroll-bar-mode -1)
-
-;;direxの使用
-(require 'direx)
-(global-set-key (kbd "C-x C-j") 'direx:jump-to-directory)
 
 ;;^M+kによる一行コピー
 ;;^M+Kによる一行カット
