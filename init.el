@@ -168,7 +168,6 @@
              ))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-
 ; Mode Setting;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Yatex mode
 ; エンコーディングをutf-8にする。＠yatex
@@ -176,6 +175,7 @@
 (setq YaTeX-use-LaTeX2e t)
 (setq YaTeX-use-AMS-LaTeX t)
 (setq tex-command "platex")
+(setq bibtex-command "bibtex")
 (setq YaTeX-dvipdf-command "dvipdfmx")
 (setq auto-mode-alist
       (cons (cons "\\.tex$" 'yatex-mode) auto-mode-alist))
@@ -382,4 +382,13 @@
 (global-set-key (kbd "M-k") 'copy-whole-line)
 (global-set-key (kbd "M-K") 'kill-whole-line)
 
+
+(setq migemo-dictionary "/usr/local/share/migemo/utf-8/migemo-dict")
+(setq migemo-command "cmigemo")
+(setq migemo-options '("-q" "--emacs"))
+(setq migemo-user-dictionary nil)
+(setq migemo-coding-system 'utf-8)
+(setq migemo-regex-dictionary nil)
+(load-library "migemo")
+(migemo-init)
 
